@@ -36,6 +36,7 @@ export const Modal = ({
   setModal,
 }: PropTypes) => {
   const [name, setName] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [description, setDescription] = useState('');
   const [photo, setPhoto] = useState('');
   const [initialPrice, setInitialPrice] = useState('');
@@ -77,9 +78,9 @@ export const Modal = ({
 
     console.log(duration);
     if (!resp.success) {
-      alert(resp.message);
+      setErrorMessage(resp.message);
     } else {
-      alert('Registrado com sucesso!');
+      setErrorMessage('');
       setModal(false);
     }
   }
@@ -90,7 +91,7 @@ export const Modal = ({
       ref={modalRef}
       onClick={closeModal}
     >
-      <div className=" w-screen md:w-[34rem] md:h-[29rem] py-4 px-3 flex flex-col rounded-t-2xl md:rounded-2xl bg-white ">
+      <div className=" w-screen md:w-[34rem] md:h-[31rem] py-4 px-3 flex flex-col rounded-t-2xl md:rounded-2xl bg-white ">
         <div className="flex justify-between items-center mb-2">
           <h3></h3>
           <h3 className="text-lg text-header-dark text-center "></h3>
@@ -167,6 +168,7 @@ export const Modal = ({
             </div>
           </div>
         </div>
+        <p className="text-red-700">{errorMessage}</p>
         <div className="mb-5 flex justify-center gap-5">
           <Button
             type="button"
