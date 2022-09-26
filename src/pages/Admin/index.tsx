@@ -91,7 +91,6 @@ export const Admin = () => {
 
   const arrayCards = async () => {
     const resp = await getAllAuctions();
-    console.log('pamonha')
     if (!resp.success) {
       setErrorMessage(resp.message);
       return [] as RespAuctionType[];

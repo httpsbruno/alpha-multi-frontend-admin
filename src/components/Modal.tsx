@@ -90,7 +90,7 @@ export const Modal = ({
       ref={modalRef}
       onClick={closeModal}
     >
-      <div className=" w-screen md:w-[34rem] md:h-[31rem] py-4 px-3 flex flex-col rounded-t-2xl md:rounded-2xl bg-white ">
+      <div className=" w-screen md:w-[34rem] md:h-[33rem] py-4 px-3 flex flex-col rounded-t-2xl md:rounded-2xl bg-white ">
         <div className="flex justify-between items-center mb-2">
           <h3></h3>
           <h3 className="text-lg text-header-dark text-center "></h3>
@@ -110,6 +110,8 @@ export const Modal = ({
           >
             <div className="flex flex-col justify-center items-center w-fit m-2">
               <img src={image} alt="Add Image" className=" w-14 h-20" />
+              <input type="file" className='w-[212px] h-[42px] border-2 border-gray-600 mb-1' />
+              <p>Ou</p>
               <textarea
                 placeholder="Link da imagem"
                 cols={20}
@@ -140,7 +142,7 @@ export const Modal = ({
                 <textarea
                   placeholder="Descrição"
                   cols={20}
-                  rows={6}
+                  rows={10}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   className="p-1 resize-none outline-none border-solid border-2 border-gray-600 rounded-md m-2"
