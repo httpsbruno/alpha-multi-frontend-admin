@@ -3,6 +3,7 @@ import { MouseEvent, useEffect, useRef, useState } from 'react';
 import { Button } from './Button';
 import image from '../images/image.svg';
 import { createAuction } from '../apiCalls/auction/createAuction';
+import { inputMask } from '../masks/inputMask';
 
 interface PropTypes {
   title: string;
@@ -25,7 +26,7 @@ interface AuctionType {
   description: string;
   photo: string;
   initial_price: string;
-  duration: number;
+  close_at: string;
   open_at: string;
 }
 
@@ -40,7 +41,7 @@ export const Modal = ({
   const [description, setDescription] = useState('');
   const [photo, setPhoto] = useState('');
   const [initialPrice, setInitialPrice] = useState('');
-  const [duration, setDuration] = useState('');
+  const [closeAt, setCloseAt] = useState('');
   const [openAt, setOpenAt] = useState('');
 
   const modalRef = useRef<HTMLDivElement>(null);
@@ -69,14 +70,12 @@ export const Modal = ({
       description,
       photo,
       initial_price: initialPrice,
-      duration:
-        Number(duration.split(':')[0]) * 60 * 60 * 1000 +
-        Number(duration.split(':')[1]) * 60 * 1000,
-      open_at: openAt,
+      close_at: closeAt.replaceAll('T', ' ') + ':00',
+      open_at: openAt.replaceAll('T', ' ') + ':00',
     };
+
     const resp = await createAuction(auction);
 
-    console.log(duration);
     if (!resp.success) {
       setErrorMessage(resp.message);
     } else {
@@ -129,9 +128,9 @@ export const Modal = ({
               ></textarea>
               <input
                 placeholder="Preço inicial"
-                type="number"
+                type="text"
                 value={initialPrice}
-                onChange={(e) => setInitialPrice(e.target.value)}
+                onChange={(e) => setInitialPrice(`R$ ${inputMask(e.target.value)}`)}
                 className="w-52 h-10 p-1 resize-none placeholder:inset-3/4 outline-none border-solid border-2 border-gray-600 rounded-md m-2 mt-2"
               ></input>
             </div>
@@ -148,20 +147,20 @@ export const Modal = ({
                 ></textarea>
               </div>
               <div className="flex flex-col justify-center items-start m-1">
-                <label>Data de início:</label>
+                <label>Data de abertura:</label>
                 <input
-                  type="date"
+                  type="datetime-local"
                   value={openAt}
                   onChange={(e) => setOpenAt(e.target.value)}
                   className="p-1 w-52 h-10 mt-1 border-solid border-2 border-gray-600 rounded-md"
                 ></input>
               </div>
               <div className="flex flex-col justify-center items-start m-1 mt-2">
-                <label className="ml-2">Duração:</label>
+                <label className="ml-2">Data de fechamento:</label>
                 <input
-                  type="time"
-                  value={duration}
-                  onChange={(e) => setDuration(e.target.value)}
+                  type="datetime-local"
+                  value={closeAt}
+                  onChange={(e) => setCloseAt(e.target.value)}
                   className="w-52 h-10 p-1 resize-none placeholder:inset-3/4 outline-none border-solid border-2 border-gray-600 rounded-md m-2 mt-2"
                 ></input>
               </div>

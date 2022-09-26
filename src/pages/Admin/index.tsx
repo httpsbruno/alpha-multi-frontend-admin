@@ -5,6 +5,7 @@ import Navbar from '../../components/Navbar';
 import { UserDataContext } from '../../providers/UserDataProvider';
 import { AdminCard } from '../../components/AdminCard';
 import { getAllAuctions } from '../../apiCalls/auction/getAllAuctions';
+import { updateAuction } from '../../apiCalls/auction/updateAuction';
 
 /**
  * Archive: src/pages/Admin/index.tsx
@@ -23,11 +24,21 @@ interface RespAuctionType {
   photo: string;
   initial_price: string;
   final_price: string | null;
-  duration: number;
+  close_at: string;
   open_at: string;
   created_at: string;
   updated_at: string | null;
   closed_at: string | null;
+}
+
+interface AuctionType {
+  auction_id: string;
+  name: string;
+  description: string;
+  photo: string;
+  initial_price: string;
+  close_at: string;
+  open_at: string;
 }
 
 export const Admin = () => {
@@ -35,16 +46,41 @@ export const Admin = () => {
 
   const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState<boolean>(false);
+  const [modalCard, setModalCard] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [cardEmpty, setCardEmpty] = useState<boolean>(true);
   const [search, setSearch] = useState<boolean>(false);
   const [arrayCardsFiltered, setArrayCardsFiltered] = useState<
     RespAuctionType[]
   >([]);
+  const [refresh, setRefresh] = useState<number>(0);
+
+  async function handleUpdateAuction(data: AuctionType) {
+    const auction: AuctionType = {
+      auction_id: data.auction_id,
+      name: data.name,
+      description: data.description,
+      photo: data.photo,
+      initial_price: data.initial_price,
+      close_at: data.close_at.replaceAll('T', ' ') + ':00',
+      open_at: data.open_at.replaceAll('T', ' ') + ':00',
+    };
+
+    const resp = await updateAuction(auction);
+
+    if (!resp.success) {
+      alert(resp.message);
+    } else {
+      alert('Atualizado com sucesso!');
+      setModalCard(false);
+    }
+  }
 
   const cards = arrayCardsFiltered.map((card, index) => {
     return (
       <AdminCard
+        handleUpdateAuction={handleUpdateAuction}
+        modalCard={setModalCard}
         key={index}
         image={card.photo}
         title={card.name}
@@ -55,7 +91,7 @@ export const Admin = () => {
 
   const arrayCards = async () => {
     const resp = await getAllAuctions();
-
+    console.log('pamonha')
     if (!resp.success) {
       setErrorMessage(resp.message);
       return [] as RespAuctionType[];
@@ -76,7 +112,7 @@ export const Admin = () => {
         }
       });
     }
-  }, [modal, cards]);
+  }, [refresh]);
 
   /* const arrayTwoCards: JSX.Element[][] = [];
   const corte = 3;
@@ -154,6 +190,7 @@ export const Admin = () => {
               </div>
 
               <p className="text-red-700">{errorMessage}</p>
+              <div onClick={() => setRefresh(refresh+1)} className="w-7 h-7 mb-4 mr-3 bg-trash bg-contain border-none bg-center bg-no-repeat"></div>
               <div className="ml-16 grid grid-flow-row grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 justify-center bg-[#1F1F35] p-10 mb-7 rounded-3xl w-72 sm:w-[500px] md:w-[700px] lg:w-[900px] xl:w-[1100px] 2xl:w-[1300px] min-h-5/6 overflow-auto">
                 <div
                   className="hover:bg-gray-100 hover:bg-opacity-20  relative w-[195px] h-[192px] m-2 mb-7 flex flex-col justify-center items-center bg-+ bg-no-repeat bg-center border-solid border-2 hover:border-3 hover:border-purple-900 rounded-2xl hover:shadow-2xl"
