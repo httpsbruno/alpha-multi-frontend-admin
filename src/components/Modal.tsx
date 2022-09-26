@@ -69,7 +69,7 @@ export const Modal = ({
       name,
       description,
       photo,
-      initial_price: initialPrice,
+      initial_price: initialPrice.split('R$ ')[1],
       close_at: closeAt.replaceAll('T', ' ') + ':00',
       open_at: openAt.replaceAll('T', ' ') + ':00',
     };

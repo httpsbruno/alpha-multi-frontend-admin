@@ -78,6 +78,7 @@ export const Admin = () => {
 
   const cards = arrayCardsFiltered.map((card, index) => {
     return (
+      
       <AdminCard
         handleUpdateAuction={handleUpdateAuction}
         modalCard={setModalCard}
