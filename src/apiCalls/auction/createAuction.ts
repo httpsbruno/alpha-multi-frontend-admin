@@ -1,3 +1,5 @@
+import { backEnd } from '../host';
+
 interface AuctionType {
   name: string;
   description: string;
@@ -17,7 +19,7 @@ async function createAuction(data: AuctionType) {
     open_at: data.open_at,
   };
 
-  const fetchResponse = await fetch('http://localhost:8000/createAuction', {
+  const fetchResponse = await fetch(`${backEnd}/createAuction`, {
     method: 'POST',
     credentials: 'include',
     headers: { Accept: 'application/json', 'Content-Type': 'application/json' },

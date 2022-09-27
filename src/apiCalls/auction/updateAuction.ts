@@ -1,3 +1,5 @@
+import { backEnd } from '../host';
+
 interface AuctionType {
   auction_id: string;
   name: string;
@@ -19,7 +21,7 @@ async function updateAuction(data: AuctionType) {
     open_at: data.open_at,
   };
 
-  const fetchResponse = await fetch('http://localhost:8000/updateAuction', {
+  const fetchResponse = await fetch(`${backEnd}/updateAuction`, {
     method: 'PUT',
     credentials: 'include',
     headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
