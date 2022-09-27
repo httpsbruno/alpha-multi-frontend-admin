@@ -1,5 +1,6 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { updateAuction } from '../../apiCalls/auction/updateAuction';
 import { Modal } from '../Modal';
 import { ModalDelete } from '../ModalDelete';
 import { ModalInfo } from '../ModalInfo';
@@ -19,6 +20,8 @@ interface ChildrenTypes {
   title: string;
   image: string;
   content: RespAuctionType;
+  modalCard: (modal: boolean) => void;
+  handleUpdateAuction: (data: AuctionType) => void;
 }
 
 interface RespAuctionType {
@@ -29,20 +32,55 @@ interface RespAuctionType {
   photo: string;
   initial_price: string;
   final_price: string | null;
-  duration: number;
+  close_at: string;
   open_at: string;
   created_at: string;
   updated_at: string | null;
   closed_at: string | null;
 }
 
+interface AuctionType {
+  auction_id: string;
+  name: string;
+  description: string;
+  photo: string;
+  initial_price: string;
+  close_at: string;
+  open_at: string;
+}
+
 const teste = () => {
   console.log('teste');
 };
 
-export const AdminCard = ({ title, image, content }: ChildrenTypes) => {
+export const AdminCard = ({ title, image, content, modalCard, handleUpdateAuction }: ChildrenTypes) => {
   const [modal, setModal] = useState<boolean>(false);
   const [modalDelete, setModalDelete] = useState<boolean>(false);
+
+  // async function handleUpdateAuction(data: AuctionType) {
+  //   const auction: AuctionType = {
+  //     auction_id: data.auction_id,
+  //     name: data.name,
+  //     description: data.description,
+  //     photo: data.photo,
+  //     initial_price: data.initial_price,
+  //     close_at: data.close_at.replaceAll('T', ' ') + ':00',
+  //     open_at: data.open_at.replaceAll('T', ' ') + ':00',
+  //   };
+
+  //   const resp = await updateAuction(auction);
+
+  //   if (!resp.success) {
+  //     alert(resp.message);
+  //   } else {
+  //     alert('Atualizado com sucesso!');
+  //     setModal(false);
+  //   }
+  // }
+
+  useEffect(() => {
+    modalCard(false);
+  }, [modal, modalDelete]);
 
   return (
     <>
@@ -51,7 +89,7 @@ export const AdminCard = ({ title, image, content }: ChildrenTypes) => {
           title="Editar Lote/Item"
           content={content}
           setModal={setModal}
-          handleConfirmModal={teste}
+          handleConfirmModal={handleUpdateAuction}
         />
       )}
       {modalDelete && (

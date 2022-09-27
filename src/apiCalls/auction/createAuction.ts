@@ -5,7 +5,7 @@ interface AuctionType {
   description: string;
   photo: string;
   initial_price: string;
-  duration: number;
+  close_at: string;
   open_at: string;
 }
 
@@ -15,7 +15,7 @@ async function createAuction(data: AuctionType) {
     description: data.description,
     photo: data.photo,
     initial_price: data.initial_price,
-    duration: data.duration,
+    close_at: data.close_at,
     open_at: data.open_at,
   };
 

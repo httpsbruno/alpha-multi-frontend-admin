@@ -1,13 +1,15 @@
 import { X } from 'phosphor-react';
+import { useNavigate } from 'react-router';
 import { MouseEvent, useEffect, useRef, useState } from 'react';
 import { Button } from './Button';
 import image from '../images/image.svg';
 import { updateAuction } from '../apiCalls/auction/updateAuction';
+import { inputMask } from '../masks/inputMask';
 
 interface PropTypes {
   title: string;
   content: AuctionType;
-  handleConfirmModal: () => void;
+  handleConfirmModal: (data:AuctionType) => void;
   setModal: (modal: boolean) => void;
 }
 
@@ -26,7 +28,7 @@ interface AuctionType {
   description: string;
   photo: string;
   initial_price: string;
-  duration: number;
+  close_at: string;
   open_at: string;
 }
 
@@ -39,13 +41,12 @@ export const ModalInfo = ({
   const [name, setName] = useState(content.name);
   const [description, setDescription] = useState(content.description);
   const [photo, setPhoto] = useState(content.photo);
-  const [initialPrice, setInitialPrice] = useState(content.initial_price);
-  const [duration, setDuration] = useState(
-    new Date(content.duration).toISOString().slice(11, 16),
-  );
-  const [openAt, setOpenAt] = useState(content.open_at.split('T')[0]);
+  const [initialPrice, setInitialPrice] = useState(`R$ ${inputMask(content.initial_price)}`);
+  const [closeAt, setCloseAt] =  useState(content.close_at.replaceAll('T', ' ').replaceAll(':00.000Z', ''));
+  const [openAt, setOpenAt] = useState(content.open_at.replaceAll('T', ' ').replaceAll(':00.000Z', ''));
 
   const modalRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   function closeModal(event: MouseEvent<HTMLDivElement>) {
     if (event.target === modalRef.current) {
@@ -65,30 +66,28 @@ export const ModalInfo = ({
     );
   }, []);
 
-  async function handleUpdateAuction() {
-    const auction: AuctionType = {
-      auction_id: content.auction_id,
-      name,
-      description,
-      photo,
-      initial_price: initialPrice,
-      duration:
-        Number(duration.split(':')[0]) * 60 * 60 * 1000 +
-        Number(duration.split(':')[1]) * 60 * 1000,
-      open_at: openAt,
-    };
+  // async function handleUpdateAuction() {
+  //   const auction: AuctionType = {
+  //     auction_id: content.auction_id,
+  //     name,
+  //     description,
+  //     photo,
+  //     initial_price: initialPrice,
+  //     close_at: closeAt.replaceAll('T', ' ') + ':00',
+  //     open_at: openAt.replaceAll('T', ' ') + ':00',
+  //   };
 
-    const resp = await updateAuction(auction);
+  //   const resp = await updateAuction(auction);
 
-    console.log(duration);
-    if (!resp.success) {
-      alert(resp.message);
-    } else {
-      alert('Atualizado com sucesso!');
-      setModal(false);
-    }
-  }
+  //   if (!resp.success) {
+  //     alert(resp.message);
+  //   } else {
+  //     alert('Atualizado com sucesso!');
+  //     setModal(false);
+  //   }
+  // }
 
+  
   return (
     <div
       className="z-50 fixed top-0 left-0 right-0 bottom-0 flex justify-center md:items-center items-end bg-black bg-opacity-50"
@@ -133,9 +132,9 @@ export const ModalInfo = ({
               ></textarea>
               <input
                 placeholder="Preço inicial"
-                type="number"
+                type="text"
                 value={initialPrice}
-                onChange={(e) => setInitialPrice(e.target.value)}
+                onChange={(e) => setInitialPrice(`R$ ${inputMask(e.target.value)}`)}
                 className="w-52 h-10 p-1 resize-none placeholder:inset-3/4 outline-none border-solid border-2 border-gray-600 rounded-md m-2 mt-2"
               ></input>
             </div>
@@ -152,20 +151,20 @@ export const ModalInfo = ({
                 ></textarea>
               </div>
               <div className="flex flex-col justify-center items-start m-1">
-                <label>Data de início:</label>
+                <label>Data de abertura:</label>
                 <input
-                  type="date"
+                  type="datetime-local"
                   value={openAt}
                   onChange={(e) => setOpenAt(e.target.value)}
                   className="p-1 w-52 h-10 mt-1 border-solid border-2 border-gray-600 rounded-md"
                 ></input>
               </div>
               <div className="flex flex-col justify-center items-start m-1 mt-2">
-                <label className="ml-2">Duração:</label>
+                <label className="ml-2">Data de fechamento:</label>
                 <input
-                  type="time"
-                  value={duration}
-                  onChange={(e) => setDuration(e.target.value)}
+                  type="datetime-local"
+                  value={closeAt}
+                  onChange={(e) => setCloseAt(e.target.value)}
                   className="w-52 h-10 p-1 resize-none placeholder:inset-3/4 outline-none border-solid border-2 border-gray-600 rounded-md m-2 mt-2"
                 ></input>
               </div>
@@ -185,7 +184,15 @@ export const ModalInfo = ({
             color="bg-[#00B682]"
             category="primary"
             label="Confirmar"
-            onClick={() => handleUpdateAuction()}
+            onClick={() => {handleConfirmModal({
+                  auction_id: content.auction_id,
+                  name,
+                  description,
+                  photo,
+                  initial_price: initialPrice,
+                  close_at: closeAt.replaceAll('T', ' '),
+                  open_at: openAt.replaceAll('T', ' '),
+                })}}
           />
         </div>
       </div>
