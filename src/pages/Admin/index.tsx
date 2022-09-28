@@ -62,8 +62,8 @@ export const Admin = () => {
       description: data.description,
       photo: data.photo,
       initial_price: data.initial_price,
-      close_at: data.close_at.replaceAll('T', ' ') + ':00',
-      open_at: data.open_at.replaceAll('T', ' ') + ':00',
+      close_at: `${data.close_at.replaceAll('T', ' ')}:00`,
+      open_at: `${data.open_at.replaceAll('T', ' ')}:00`,
     };
 
     const resp = await updateAuction(auction);
@@ -78,7 +78,6 @@ export const Admin = () => {
 
   const cards = arrayCardsFiltered.map((card, index) => {
     return (
-      
       <AdminCard
         handleUpdateAuction={handleUpdateAuction}
         modalCard={setModalCard}
@@ -186,13 +185,18 @@ export const Admin = () => {
                     {userInfo.userLogged}
                   </p>
                   <div className="flex items-center justify-center bg-white w-10 h-10 rounded-full mr-10">
-                    <h1 className='font-body font-bold text-desaturatedBlue text-xl'>{userInfo.userLogged[0].toUpperCase()}</h1>
+                    <h1 className="font-body font-bold text-desaturatedBlue text-xl">
+                      {userInfo.userLogged[0].toUpperCase()}
+                    </h1>
                   </div>
                 </div>
               </div>
 
               <p className="text-red-700">{errorMessage}</p>
-              <div onClick={() => setRefresh(refresh+1)} className="w-7 h-7 mb-4 mr-3 bg-trash bg-contain border-none bg-center bg-no-repeat"></div>
+              <div
+                onClick={() => setRefresh(refresh + 1)}
+                className="w-7 h-7 mb-4 mr-3 bg-trash bg-contain border-none bg-center bg-no-repeat"
+              ></div>
               <div className="ml-16 grid grid-flow-row grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 justify-center bg-[#1F1F35] p-10 mb-7 rounded-3xl w-72 sm:w-[500px] md:w-[700px] lg:w-[900px] xl:w-[1100px] 2xl:w-[1300px] min-h-5/6 overflow-auto">
                 <div
                   className="hover:bg-gray-100 hover:bg-opacity-20  relative w-[195px] h-[192px] m-2 mb-7 flex flex-col justify-center items-center bg-+ bg-no-repeat bg-center border-solid border-2 hover:border-3 hover:border-purple-900 rounded-2xl hover:shadow-2xl"
